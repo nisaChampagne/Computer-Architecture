@@ -3,7 +3,6 @@
 import sys
 
 '''
-MAY NEED VARIABLES FOR THESE LATER
 * `LDI`: load "immediate", store a value in a register, or "set this register to
   this value".
 * `PRN`: a pseudo-instruction that prints the numeric value stored in a
@@ -11,12 +10,15 @@ MAY NEED VARIABLES FOR THESE LATER
 * `HLT`: halt the CPU and exit the emulator.
 '''
 
+HLT = 0b00000001
+LDI = 0b10000010
+PRN = 0b01000111
 
 class CPU:
     """Main CPU class."""
 
     '''
-    Add list properties to the `CPU` class to hold 256 bytes of memory and 8
+    Add list(memory) properties to the `CPU` class to hold 256 bytes of memory and 8
     general-purpose registers.
 
     > Hint: you can make a list of a certain number of zeros with this syntax:
@@ -32,8 +34,14 @@ class CPU:
     '''
     def __init__(self):
         """Construct a new CPU."""
+
+        #256 bytes of memory
         self.ram = [0] * 256
+
+        # a word is 8 bit
         self.reg = [0] * 8
+
+        # program counter
         self.pc = 0
 
     '''
@@ -132,4 +140,37 @@ class CPU:
         The number of bytes an instruction uses can be determined from the two high bits
         (bits 6-7) of the instruction opcode. See the LS-8 spec for details.
         '''
-        pass
+        halted = False
+        PC = self.pc
+
+        while not halted:
+
+            #command = memory[pc]
+            IR = self.ram_read(PC)
+
+            # Using `ram_read()`,read the bytes at `PC+1` and `PC+2` from RAM into variables `operand_a` and
+            # `operand_b` in case the instruction needs them.
+            operand_a = self.ram_read(PC + 1)
+            operand_b = self.ram_read(PC + 2)
+
+            if IR == HLT:
+                #* `HLT`: halt the CPU and exit the emulator.
+                halted = True
+
+            elif IR == PRN:
+                # `PRN`: a pseudo-instruction that prints the numeric value stored in a register.
+                # a is register_index. print reg a
+                print(self.reg[operand_a])
+                PC += 2
+
+            elif IR == LDI:
+                #* `LDI`: load "immediate", store a value in a register, or "set this register to this value".
+                # a is register, b is the value. add b to reg[a]
+                self.reg[operand_a] = operand_b
+                PC += 2
+
+            else:
+                print(f'{IR} no bueno!')
+                sys.exit(1)
+
+
