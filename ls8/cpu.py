@@ -13,6 +13,7 @@ import sys
 HLT = 0b00000001
 LDI = 0b10000010
 PRN = 0b01000111
+MUL = 0b10100010
 
 class CPU:
     """Main CPU class."""
@@ -168,7 +169,7 @@ class CPU:
                 # a is register, b is the value. add b to reg[a]
                 self.reg[operand_a] = operand_b
                 PC += 2
-
+    
             else:
                 print(f'{IR} no bueno!')
                 sys.exit(1)
