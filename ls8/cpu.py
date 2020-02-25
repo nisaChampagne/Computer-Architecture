@@ -68,22 +68,42 @@ class CPU:
     def ram_write(self, value, mem_address):
         self.ram[mem_address] = value
 
-    def load(self):
+    def load(self, filename):
         """Load a program into memory."""
 
         address = 0
 
         # For now, we've just hardcoded a program:
 
-        program = [
-            # From print8.ls8
-            0b10000010, # LDI R0,8
-            0b00000000,
-            0b00001000,
-            0b01000111, # PRN R0
-            0b00000000,
-            0b00000001, # HLT
-        ]
+        # program = [
+        #     # From print8.ls8
+        #     0b10000010, # LDI R0,8
+        #     0b00000000,
+        #     0b00001000,
+        #     0b01000111, # PRN R0
+        #     0b00000000,
+        #     0b00000001, # HLT
+        # ]
+        program = []
+
+        with open(filename) as f:
+            #read all the lines
+                for line in f:
+                    # parse out comments
+                    # print(line)
+                    split = line.split('#')
+                    # ignore blank lines
+
+                    #cast numbers from strings to ints
+                    value = split[0].strip()
+                    if value == "":
+                        continue
+                    print(value)
+                    try:
+                        program.append(int(value,2))
+                    except ValueError:
+                        print('File not found')
+                        sys.exit(2)
 
         for instruction in program:
             self.ram[address] = instruction
@@ -99,25 +119,25 @@ class CPU:
         else:
             raise Exception("Unsupported ALU operation")
 
-    def trace(self):
-        """
-        Handy function to print out the CPU state. You might want to call this
-        from run() if you need help debugging.
-        """
+    # def trace(self):
+    #     """
+    #     Handy function to print out the CPU state. You might want to call this
+    #     from run() if you need help debugging.
+    #     """
 
-        print(f"TRACE: %02X | %02X %02X %02X |" % (
-            self.pc,
-            #self.fl,
-            #self.ie,
-            self.ram_read(self.pc),
-            self.ram_read(self.pc + 1),
-            self.ram_read(self.pc + 2)
-        ), end='')
+    #     print(f"TRACE: %02X | %02X %02X %02X |" % (
+    #         self.pc,
+    #         #self.fl,
+    #         #self.ie,
+    #         self.ram_read(self.pc),
+    #         self.ram_read(self.pc + 1),
+    #         self.ram_read(self.pc + 2)
+    #     ), end='')
 
-        for i in range(8):
-            print(" %02X" % self.reg[i], end='')
+    #     for i in range(8):
+    #         print(" %02X" % self.reg[i], end='')
 
-        print()
+    #     print()
 
     def run(self):
         """Run the CPU."""
@@ -171,7 +191,7 @@ class CPU:
                 PC += 2
     
             else:
-                print(f'{IR} no bueno!')
+                print('no bueno!')
                 sys.exit(1)
 
 

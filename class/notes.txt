@@ -1,3 +1,5 @@
+2/24
+
 1 = high voltage
 0 = low voltage
 
@@ -72,3 +74,103 @@ OXC6
 
 how to ones and zeros get converted to floats?
 (LOOK INTO THIS)
+
+
+-----------------------------------------
+2/25
+
+word = size of the basic data type
+ls8 = 8 bit word
+
+ cache storage slower than register 
+ registers are much faster 
+ registers are expensive because of need to have direct access to the hardware
+
+
+ 1) truth tables
+
+ A or B 
+
+ A      B      RESULT
+ -----------------------
+ 0      0      0
+ 0      1      0
+ 1      0      0
+ 1      1      1
+
+ A and B 
+
+ A      B      RESULT
+ -----------------------
+ 0      0      0
+ 0      1      0
+ 1      0      0
+ 1      1      1
+
+
+  not (A and B) 
+
+ A      B      RESULT
+ -----------------------
+ 0      0      1
+ 0      1      1
+ 1      0      1
+ 1      1      0
+
+
+ A xor B (exclusive or)
+ -give me one or the other
+
+ A      B      RESULT
+ -----------------------
+ 0      0      0
+ 0      1      1
+ 1      0      1
+ 1      1      0
+
+not (A or not B) and B or not(a or B) == not a
+
+
+ A      B      RESULT
+ -----------------------
+ 0      0      1
+ 0      1      1
+ 1      0      0
+ 1      1      0
+
+for a in [False, True]:
+   for B in [False, True]:
+      print(f"{a} - {b} -- {not (a or not B) and B or not(a or B)== not a }")
+
+bitwise
+logic - treats each as a single entity and treat them as such
+
+bit shifting 
+
+0b01010111 << 2
+
+
+0b01010111 >> 2
+
+***** 2) transistor logic
+transistors = little switches
+             has three pins
+             touch wire and then ground = BAD SHOCK   
+             semiconducts = conducts under certain conditions
+             - no voltage = will not conduct
+             can create a NAND
+             ex:
+              not (A and B) 
+
+                  A      B      RESULT
+                  -----------------------
+                  0      0      1
+                  0      1      1
+                  1      0      1
+                  1      1      0
+
+            1 transistor == AND 
+            2 transistors == NAND
+
+
+***** 3) file I/O in simple machine
