@@ -13,7 +13,12 @@ import sys
 HLT = 0b00000001
 LDI = 0b10000010
 PRN = 0b01000111
+
 MUL = 0b10100010
+ADD = 0b10100000
+SUB = 0b10100001
+DIV = 0b10100011
+
 
 class CPU:
     """Main CPU class."""
@@ -100,11 +105,17 @@ class CPU:
     def alu(self, op, reg_a, reg_b):
         """ALU operations."""
 
-        if op == "ADD":
+        if op == ADD:
             self.reg[reg_a] += self.reg[reg_b]
-        #elif op == "SUB": etc
-        elif op == "MUL":
+        elif op == SUB:
+            self.reg[reg_a] -= self.reg[reg_b]
+        elif op == MUL:
             self.reg[reg_a] *= self.reg[reg_b]
+        elif op == DIV:
+            if self.reg[reg_b] == 0:
+                print("Error: cannot divide by 0 silly")
+                sys.exit()
+            self.reg[reg_a] /= self.reg[reg_b]
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -165,8 +176,8 @@ class CPU:
 
             if IR == HLT:
                 #* `HLT`: halt the CPU and exit the emulator.
-                halted = True
                 self.pc += 1
+                halted = True
 
             elif IR == PRN:
                 # `PRN`: a pseudo-instruction that prints the numeric value stored in a register.
@@ -184,8 +195,8 @@ class CPU:
                 # multiply the values in two registers together
                 # store the results in reg A
             elif IR == MUL:
-                self.alu('MUL', operand_a, operand_b)
-                self.pc += 3
+                self.alu(MUL, operand_a, operand_b)
+                PC += 3
             else:
                 print('Bad instruction register', IR)
                 halted = True
