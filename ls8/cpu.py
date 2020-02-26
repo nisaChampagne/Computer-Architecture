@@ -146,21 +146,21 @@ class CPU:
 
             elif IR == PUSH:
                 # Grab the register argument
-                reg = self.ram[PC + 1] # the argument, telling us what the register is
-                val = self.reg[reg]
+                register = self.ram[PC + 1] # the argument, telling us what the register is
+                value = self.reg[register]
                 # Decrement the SP.
                 self.reg[self.sp] -= 1
                 # Copy the value in the given self.reg to the address pointed to by self.sp.
-                self.ram[self.reg[self.sp]] = val
+                self.ram[self.reg[self.sp]] = value
                 PC += 2
             elif IR == POP:
                 # Grab the value from the top of the stack
-                reg = self.ram[PC + 1] # the argument, telling us what the register is 
-                val = self.ram[self.reg[self.sp]]
+                register = self.ram[PC + 1] # the argument, telling us what the register is 
+                value = self.ram[self.reg[self.sp]]
                 # Copy the value from the address pointed to by SP to the given register.
-                self.reg[reg] = val
+                self.reg[register] = value
                 # Increment SP.
-                self.reg[self.sp] += 1
+                self.reg[self.sp] += 1 # stack pointer value is stored in register
                 PC += 2
                     
                 # multiply the values in two registers together
