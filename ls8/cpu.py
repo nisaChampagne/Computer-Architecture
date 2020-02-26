@@ -9,15 +9,20 @@ import sys
   register.
 * `HLT`: halt the CPU and exit the emulator.
 '''
-
+# day 1
 HLT = 0b00000001
 LDI = 0b10000010
 PRN = 0b01000111
 
+# day 2
 MUL = 0b10100010
 ADD = 0b10100000
 SUB = 0b10100001
 DIV = 0b10100011
+
+# day 3
+PUSH = 0b01000101
+POP = 0b01000110
 
 
 class CPU:
@@ -26,15 +31,12 @@ class CPU:
     '''
     Add list(memory) properties to the `CPU` class to hold 256 bytes of memory and 8
     general-purpose registers.
-
     > Hint: you can make a list of a certain number of zeros with this syntax:
     >
     > ```python
     > x = [0] * 25  # x is a list of 25 zeroes
     > ```
-
     Also add properties for any internal registers you need, e.g. `PC`.
-
     Later on, you might do further initialization here, e.g. setting the initial
     value of the stack pointer.
     '''
@@ -53,12 +55,9 @@ class CPU:
     '''
     In `CPU`, add method `ram_read()` and `ram_write()` that access the RAM inside
     the `CPU` object.
-
     `ram_read()` should accept the address to read and return the value stored
     there.
-
     `raw_write()` should accept a value to write, and the address to write it to.
-
     > Inside the CPU, there are two internal registers used for memory operations:
     > the _Memory Address Register_ (MAR) and the _Memory Data Register_ (MDR). The
     > MAR contains the address that is being read or written to. The MDR contains
@@ -93,7 +92,6 @@ class CPU:
                     if value == "":
                         continue
                     final_val = int(value, 2)
-                    print(final_val, 'FINAL VAL WOO!')
                     self.ram[address] = final_val
                     address += 1 # iterates!
 
@@ -145,17 +143,14 @@ class CPU:
         It needs to read the memory address that's stored in register `PC`, and store
         that result in `IR`, the _Instruction Register_. This can just be a local
         variable in `run()`.
-
         Some instructions requires up to the next two bytes of data _after_ the `PC` in
         memory to perform operations on. Sometimes the byte value is a register number,
         other times it's a constant value (in the case of `LDI`). Using `ram_read()`,
         read the bytes at `PC+1` and `PC+2` from RAM into variables `operand_a` and
         `operand_b` in case the instruction needs them.
-
         Then, depending on the value of the opcode, perform the actions needed for the
         instruction per the LS-8 spec. Maybe an `if-elif` cascade...? There are other
         options, too.
-
         After running code for any particular instruction, the `PC` needs to be updated
         to point to the next instruction for the next iteration of the loop in `run()`.
         The number of bytes an instruction uses can be determined from the two high bits
@@ -183,7 +178,6 @@ class CPU:
                 # `PRN`: a pseudo-instruction that prints the numeric value stored in a register.
                 # a is register_index. print reg a
                 print(self.reg[operand_a])
-                print(sys.argv[1])
                 PC += 2
 
             elif IR == LDI:
@@ -200,5 +194,3 @@ class CPU:
             else:
                 print('Bad instruction register', IR)
                 halted = True
-
-
