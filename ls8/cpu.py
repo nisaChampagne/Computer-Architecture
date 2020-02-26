@@ -73,17 +73,6 @@ class CPU:
 
         address = 0
 
-        # For now, we've just hardcoded a program:
-
-        # program = [
-        #     # From print8.ls8
-        #     0b10000010, # LDI R0,8
-        #     0b00000000,
-        #     0b00001000,
-        #     0b01000111, # PRN R0
-        #     0b00000000,
-        #     0b00000001, # HLT
-        # ]
         program = []
 
         with open(filename) as f:
@@ -98,12 +87,10 @@ class CPU:
                     value = split[0].strip()
                     if value == "":
                         continue
-                    print(value)
-                    try:
-                        program.append(int(value,2))
-                    except ValueError:
-                        print('File not found')
-                        sys.exit(2)
+                    final_val = int(value, 2)
+                    print(final_val, 'FINAL VAL WOO!')
+                    self.ram[address] = final_val
+                    address += 1 # iterates!
 
         for instruction in program:
             self.ram[address] = instruction
@@ -116,28 +103,30 @@ class CPU:
         if op == "ADD":
             self.reg[reg_a] += self.reg[reg_b]
         #elif op == "SUB": etc
+        elif op == "MUL":
+            self.reg[reg_a] *= self.reg[reg_b]
         else:
             raise Exception("Unsupported ALU operation")
 
-    # def trace(self):
-    #     """
-    #     Handy function to print out the CPU state. You might want to call this
-    #     from run() if you need help debugging.
-    #     """
+    def trace(self):
+        """
+        Handy function to print out the CPU state. You might want to call this
+        from run() if you need help debugging.
+        """
 
-    #     print(f"TRACE: %02X | %02X %02X %02X |" % (
-    #         self.pc,
-    #         #self.fl,
-    #         #self.ie,
-    #         self.ram_read(self.pc),
-    #         self.ram_read(self.pc + 1),
-    #         self.ram_read(self.pc + 2)
-    #     ), end='')
+        print(f"TRACE: %02X | %02X %02X %02X |" % (
+            self.pc,
+            #self.fl,
+            #self.ie,
+            self.ram_read(self.pc),
+            self.ram_read(self.pc + 1),
+            self.ram_read(self.pc + 2)
+        ), end='')
 
-    #     for i in range(8):
-    #         print(" %02X" % self.reg[i], end='')
+        for i in range(8):
+            print(" %02X" % self.reg[i], end='')
 
-    #     print()
+        print()
 
     def run(self):
         """Run the CPU."""
@@ -177,21 +166,28 @@ class CPU:
             if IR == HLT:
                 #* `HLT`: halt the CPU and exit the emulator.
                 halted = True
+                self.pc += 1
 
             elif IR == PRN:
                 # `PRN`: a pseudo-instruction that prints the numeric value stored in a register.
                 # a is register_index. print reg a
                 print(self.reg[operand_a])
+                print(sys.argv[1])
                 PC += 2
 
             elif IR == LDI:
                 #* `LDI`: load "immediate", store a value in a register, or "set this register to this value".
                 # a is register, b is the value. add b to reg[a]
                 self.reg[operand_a] = operand_b
-                PC += 2
-    
+                PC += 3
+            
+                # multiply the values in two registers together
+                # store the results in reg A
+            elif IR == MUL:
+                self.alu('MUL', operand_a, operand_b)
+                self.pc += 3
             else:
-                print('no bueno!')
-                sys.exit(1)
+                print('Bad instruction register', IR)
+                halted = True
 
 
