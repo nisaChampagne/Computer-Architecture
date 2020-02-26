@@ -24,6 +24,10 @@ DIV = 0b10100011
 PUSH = 0b01000101
 POP = 0b01000110
 
+# day 4
+CALL = 0b01010000
+RET = 0b00010001
+
 
 class CPU:
   
@@ -37,16 +41,34 @@ class CPU:
         self.reg = [0] * 8
 
         # program counter
-        self.pc = 0
+        self.program_counter = 0
 
-        # stack pointer
-        self.sp = 7
+        # stack pointer lives in register spot 7
+        self.stack_pointer = 7
 
     def ram_read(self,mem_address):
         return self.ram[mem_address]
 
-    def ram_write(self, value, mem_address):
-        self.ram[mem_address] = value
+    def ram_write(self, mem_data, mem_address):
+        self.ram[mem_address] = mem_data
+
+    def stack_push(self, value):
+        '''
+        * decrement the stack pointer(sp)
+        * copy the value in the given register to the address pointed to by stack pointer(sp)
+        '''
+        self.stack_pointer -= 1
+        self.ram[self.stack_pointer] = value
+
+    def stack_pop(self):
+        '''
+        * copy the value from the address pointed to by the stack pointer(sp) to the given register
+        * increment stack pointer(sp)
+        '''
+        popped_val = self.ram[self.stack_pointer]
+        self.stack_pointer += 1
+        return popped_val
+
 
     def load(self, filename):
         """Load a program into memory."""
@@ -75,7 +97,6 @@ class CPU:
             self.ram[address] = instruction
             address += 1
 
-
     def alu(self, op, reg_a, reg_b):
         """ALU operations."""
 
@@ -100,12 +121,12 @@ class CPU:
         """
 
         print(f"TRACE: %02X | %02X %02X %02X |" % (
-            self.pc,
+            self.program_counter,
             #self.fl,
             #self.ie,
-            self.ram_read(self.pc),
-            self.ram_read(self.pc + 1),
-            self.ram_read(self.pc + 2)
+            self.ram_read(self.program_counter),
+            self.ram_read(self.program_counter + 1),
+            self.ram_read(self.program_counter + 2)
         ), end='')
 
         for i in range(8):
@@ -115,59 +136,71 @@ class CPU:
 
     def run(self):
         halted = False
-        PC = self.pc
+        program_counter = self.program_counter
 
         while not halted:
 
-            #command = memory[pc]
-            IR = self.ram_read(PC)
+            #command = memory[program_counter]
+            instruction_register = self.ram_read(program_counter)
 
-            # Using `ram_read()`,read the bytes at `PC+1` and `PC+2` from RAM into variables `operand_a` and
+            # Using `ram_read()`,read the bytes at `program_counter+1` and `program_counter+2` from RAM into variables `operand_a` and
             # `operand_b` in case the instruction needs them.
-            operand_a = self.ram_read(PC + 1)
-            operand_b = self.ram_read(PC + 2)
+            operand_a = self.ram_read(program_counter + 1)
+            operand_b = self.ram_read(program_counter + 2)
 
-            if IR == HLT:
+            if instruction_register == HLT:
                 #* `HLT`: halt the CPU and exit the emulator.
-                self.pc += 1
+                self.program_counter += 1
                 halted = True
 
-            elif IR == PRN:
+            elif instruction_register == PRN:
                 # `PRN`: a pseudo-instruction that prints the numeric value stored in a register.
                 # a is register_index. print reg a
-                print(self.reg[operand_a])
-                PC += 2
+                print('printed', self.reg[operand_a])
+                program_counter += 2
 
-            elif IR == LDI:
+            elif instruction_register == LDI:
                 #* `LDI`: load "immediate", store a value in a register, or "set this register to this value".
                 # a is register, b is the value. add b to reg[a]
                 self.reg[operand_a] = operand_b
-                PC += 3
+                program_counter += 3
 
-            elif IR == PUSH:
-                # Grab the register argument
-                register = self.ram[PC + 1] # the argument, telling us what the register is
-                value = self.reg[register]
-                # Decrement the SP.
-                self.reg[self.sp] -= 1
-                # Copy the value in the given self.reg to the address pointed to by self.sp.
-                self.ram[self.reg[self.sp]] = value
-                PC += 2
-            elif IR == POP:
-                # Grab the value from the top of the stack
-                register = self.ram[PC + 1] # the argument, telling us what the register is 
-                value = self.ram[self.reg[self.sp]]
-                # Copy the value from the address pointed to by SP to the given register.
-                self.reg[register] = value
-                # Increment SP.
-                self.reg[self.sp] += 1 # stack pointer value is stored in register
-                PC += 2
-                    
+            elif instruction_register == PUSH:
+
+                    ##### abstracted push into a method ######
+
+                # # Grab the register argument
+                # register = self.ram[program_counter + 1] # the argument, telling us what the register is
+                # value = self.reg[register]
+                # # Decrement the SP.
+                # self.reg[self.stack_pointer] -= 1
+                # # Copy the value in the given self.reg to the address pointed to by self.sp.
+                # self.ram[self.reg[self.stack_pointer]] = value
+
+                value = self.reg[operand_a]
+                self.stack_push(value)
+                program_counter += 2
+
+            elif instruction_register == POP:
+
+                    ##### abstracted push into a method ###
+
+                # # Grab the value from the top of the stack
+                # register = self.ram[program_counter + 1] # the argument, telling us what the register is 
+                # value = self.ram[self.reg[self.stack_pointer]]
+                # # Copy the value from the address pointed to by SP to the given register.
+                # self.reg[register] = value
+                # # Increment SP.
+                # self.reg[self.stack_pointer] += 1 # stack pointer value is stored in register
+
+                print('popped', self.stack_pop())
+                program_counter += 2
+
                 # multiply the values in two registers together
                 # store the results in reg A
-            elif IR == MUL:
+            elif instruction_register == MUL:
                 self.alu(MUL, operand_a, operand_b)
-                PC += 3
+                program_counter += 3
             else:
-                print('Bad instruction register', IR)
+                print('Bad instruction register', instruction_register)
                 halted = True
