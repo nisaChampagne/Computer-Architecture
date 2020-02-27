@@ -1,5 +1,3 @@
-"""CPU functionality."""
-
 import sys
 
 '''
@@ -114,25 +112,25 @@ class CPU:
         else:
             raise Exception("Unsupported ALU operation")
 
-    def trace(self):
-        """
-        Handy function to print out the CPU state. You might want to call this
-        from run() if you need help debugging.
-        """
+    # def trace(self):
+    #     """
+    #     Handy function to print out the CPU state. You might want to call this
+    #     from run() if you need help debugging.
+    #     """
 
-        print(f"TRACE: %02X | %02X %02X %02X |" % (
-            self.program_counter,
-            #self.fl,
-            #self.ie,
-            self.ram_read(self.program_counter),
-            self.ram_read(self.program_counter + 1),
-            self.ram_read(self.program_counter + 2)
-        ), end='')
+    #     print(f"TRACE: %02X | %02X %02X %02X |" % (
+    #         self.program_counter,
+    #         #self.fl,
+    #         #self.ie,
+    #         self.ram_read(self.program_counter),
+    #         self.ram_read(self.program_counter + 1),
+    #         self.ram_read(self.program_counter + 2)
+    #     ), end='')
 
-        for i in range(8):
-            print(" %02X" % self.reg[i], end='')
+    #     for i in range(8):
+    #         print(" %02X" % self.reg[i], end='')
 
-        print()
+    #     print()
 
     def run(self):
         halted = False
@@ -201,6 +199,20 @@ class CPU:
             elif instruction_register == MUL:
                 self.alu(MUL, operand_a, operand_b)
                 program_counter += 3
+
+            
+            elif instruction_register == CALL:
+                return_address = self.program_counter + 2
+                self.reg[self.stack_pointer] -= 1
+                self.ram[self.reg[self.stack_pointer]] = return_address
+
+                reg_num = operand_a
+                self.program_counter = self.reg[reg_num]
+
+            elif instruction_register == RET:
+                self.program_counter = self.ram[self.reg[self.stack_pointer]]
+                self.reg[self.stack_pointer] += 1
+
             else:
                 print('Bad instruction register', instruction_register)
                 halted = True
