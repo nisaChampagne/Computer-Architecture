@@ -3,7 +3,7 @@
 """Main."""
 
 import sys
-from cpu import CPU
+from cpuREVISED import CPU
 
 cpu = CPU()
 

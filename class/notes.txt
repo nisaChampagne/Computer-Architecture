@@ -1,0 +1,176 @@
+2/24
+
+1 = high voltage
+0 = low voltage
+
+8 bits = 1 bytes
+
+0-255 values
+
+0000 0000 = a byte
+
+base 10 numbers:
+(use because we have 10 fingers lol)
+
+123 = 3 ones 2 tens and 1 hundred
+100 + 20 + 3
+
+
+1 * 10^2 = 100
+2 * 10^1 = 10
+3 * 10^0 = 1 
+
+represent binary with 0b
+0b1010  
+0b (3)(2)(1)(0)
+
+1 * 2^3   1 * 8
+0 * 2^2   1 * 4
+1 * 2^1   1 * 2 
+0 * 2^0   0 * 1
+
+8 + 2 = 10
+
+   8 4 2 1
+
+ob 0 1 1 0
+
+
+ob00101010
+128 + 64+ 32 + 16 + 8 + 4 + 2 + 1
+= 255
+
+CAN DO bin( 45) to get binary num
+
+nybble = 1/2 a byte
+4 bits a nybble
+0-16 total values
+
+0,1,2,3,4,5,6,7,8,9,A=10,B=11,C=12,D=13,E=14,F=15
+
+
+0 0000
+1 0001
+2 0010
+3 0011
+4 0100
+5 0101
+6 0110
+7 0111
+8 1000
+9 1001
+A 1010
+B 1011
+C 1100
+D 1101
+E 1110
+F 1111
+
+OB 1000 0101
+OX85
+
+OB 1100 0110
+OXC6
+
+how to ones and zeros get converted to floats?
+(LOOK INTO THIS)
+
+
+-----------------------------------------
+2/25
+
+word = size of the basic data type
+ls8 = 8 bit word
+
+ cache storage slower than register 
+ registers are much faster 
+ registers are expensive because of need to have direct access to the hardware
+
+
+ 1) truth tables
+
+ A or B 
+
+ A      B      RESULT
+ -----------------------
+ 0      0      0
+ 0      1      0
+ 1      0      0
+ 1      1      1
+
+ A and B 
+
+ A      B      RESULT
+ -----------------------
+ 0      0      0
+ 0      1      0
+ 1      0      0
+ 1      1      1
+
+
+  not (A and B) 
+
+ A      B      RESULT
+ -----------------------
+ 0      0      1
+ 0      1      1
+ 1      0      1
+ 1      1      0
+
+
+ A xor B (exclusive or)
+ -give me one or the other
+
+ A      B      RESULT
+ -----------------------
+ 0      0      0
+ 0      1      1
+ 1      0      1
+ 1      1      0
+
+not (A or not B) and B or not(a or B) == not a
+
+
+ A      B      RESULT
+ -----------------------
+ 0      0      1
+ 0      1      1
+ 1      0      0
+ 1      1      0
+
+for a in [False, True]:
+   for B in [False, True]:
+      print(f"{a} - {b} -- {not (a or not B) and B or not(a or B)== not a }")
+
+bitwise
+logic - treats each as a single entity and treat them as such
+
+bit shifting 
+
+0b01010111 << 2
+
+
+0b01010111 >> 2
+
+***** 2) transistor logic
+transistors = little switches
+             has three pins
+             touch wire and then ground = BAD SHOCK   
+             semiconducts = conducts under certain conditions
+             - no voltage = will not conduct
+             can create a NAND
+             ex:
+              not (A and B) 
+
+                  A      B      RESULT
+                  -----------------------
+                  0      0      1
+                  0      1      1
+                  1      0      1
+                  1      1      0
+
+            1 transistor == AND 
+            2 transistors == NAND
+
+
+***** 3) file I/O in simple machine

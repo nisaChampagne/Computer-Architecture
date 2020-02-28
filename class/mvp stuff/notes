@@ -1,0 +1,115 @@
+DAY 1
+step 0:
+
+What do we have here:
+
+1) asm folder - not mandatory for overall mvp, will be for stretch
+2) ls8 folder - where we will implement mvp for the project
+    - cpu.py - we will be working primarily here to utilize load() and run() in ls8.py
+    - ls8.py - This is where we import the CPU class, initialize an instance of it and invoke load() and run()
+    - readme - will hold steps to achieve overall project mvp.
+    - examples - these will be loaded dynamically in the load function in ls8.py
+
+3) FAQ - commonly asked questions with answers. Check this out occasionally
+4) ls8 spec - lots of acronyms that will be useful later on
+5) ls8 cheatsheet - lots of useful information. i.e. add, mult, etc and their binary numbers
+6) readme - overall project readme, sets guidelines for mvp day by day
+
+What info Ive been able to gather:
+
+1) Lambda School 8 bit computer- cool cool
+2) 8 bits addressing = 256 bytes of memory total
+3) ram = [0] * 256
+4) register = [0] * 8
+    * the register is made up of 8 bits
+5) PC = program counter - address of the currently executing instruction
+6) IR = instruction register - contains a copy of the currently executing instruction
+7) MAR = memory address register - holds the memory address we are reading or writing
+8) MDR = memory data register - holds the value to write or the value just reading
+9) LDI = sets the value of a register to an integer
+10) MUL = handled by the ALU - multiply the values in two registers together and store the result in registerA
+11) POP = pop the value at the top of the stack into the given register
+    * copy the value from the address pointed to by the stack pointer(sp) to the given register
+    * increment stack pointer(sp)
+
+12) PRN = prints numeric value stored in the given register
+
+13) PUSH = push the value in the given register on the stack
+    * decrement the stack pointer(sp)
+    * copy the value in the given register to the address pointed to by stack pointer(sp)
+
+14) HLT = halt the CPU and exit the emulator
+
+
+step 1:
+the CPU constructor needs 
+    * list properties holding 256 bytes of memory
+    * list properties holding 8 general purpose registers
+    * property for internal registers
+        * self.pc = 0
+    *** later setting the inital value of a stack pointer
+
+step 2:
+RAM functions
+* ram_read() - should accept a address(MAR) to read and return the value stored there
+* ram_write() - accept a value(MDR) to write and the address(MAR) to write it to 
+
+step 3: 
+CPU run() method 
+
+* this is what makes it all come together
+* will need  variable IR (instruction register) which will hold self.ram_read(self.pc)
+* need to initialize variables operand_a  with self.ram_read(self.pc + 1) and operand_b  with self.ram_read(self.pc + 1)
+
+* while loop would be useful here with a nested if-elif-else loop
+
+step 4-6:
+
+initialize variables for HLT, PRN, AND LDI equal to their numeric value so you can call the variable name where needed
+
+
+DAY 2
+step 7:
+Time to unhardcode machine code.
+
+* in our load function we will want to use the command line arguments to open a file from examples folder, read the contents, and save data into memory
+* have to convert the binary strins to integer values to store in memory.
+
+
+step 8:
+
+* initialize MUL to its numeric value so we can call it down in run()
+
+* MUL is a part of the ALU fam so we should set it up there to call self.alu() where needed with the correct arguments 
+
+
+
+DAY 3
+
+step 9:
+BEAUTIFY RUN() LOOP
+
+* our if-elif-else block in run is kind of chunky.
+* time complexity of current is O(n), we want O(1) if possible
+
+* one way we can BEAUTIFY  is to use a branch table ( dispatch table ) to make it simplier
+    * can be a list or dictionary that you can index by opcode value
+
+step 10:
+IMPLEMENT SYSTEM STACK
+
+* all CPUs manage a stack that can be used to store info temporarily.
+* stack resides in main memory and typically starts at the top of memory and grows downwards as things are pushed on.
+
+1) add push and pop instructions
+2) values themselves should be saved in the portion of memory that is allocated for the stack
+    * use SP to modify 
+    * update SP as you use push or pop items to and from stack
+
+
+2/26 NOTES
+
+Stack overflow is when you push when the stack is full
+Stack underflow is when you pop when the stack is empty
+
+Hardware just obeys signals sent it it, they are just switches (transistors) after all.
